@@ -28,7 +28,7 @@ class ExpenseController extends Controller
                 $uqery->offset($request->offset);
             }
 
-            $espenses = $uqery->get();
+            $espenses = $uqery->orderBy('date', 'desc')->get();
 
             return response()->json([
                 'success'   => true,
