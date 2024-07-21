@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\Login;
 use Illuminate\Http\Request;
@@ -28,5 +29,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [ExpenseController::class, 'show']);
         Route::put('/{id}', [ExpenseController::class, 'update']);
         Route::delete('/{id}', [ExpenseController::class, 'destroy']);
+    });
+
+    Route::prefix('dashboard')->group(function () {
+        Route::get('jumlah_pengeluaran_hari_ini', [DashboardController::class, 'pengeluaranHariIni']);
+        Route::get('jumlah_pengeluaran_bulan_ini', [DashboardController::class, 'pengeluaranBulanIni']);
     });
 });
