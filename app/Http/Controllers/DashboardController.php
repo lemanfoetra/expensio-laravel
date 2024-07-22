@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -51,6 +52,33 @@ class DashboardController extends Controller
                 'message'   => $th->getMessage(),
                 'data'      => [],
             ], 500);
+        }
+    }
+
+
+    public function detailPengeluaranHariIni()
+    {
+        try {
+            $results = DB::table('expenses')
+                ->where('id_users', Auth::id())
+                ->where('date', date('Y-m-d'))
+                ->orderBy('date', 'desc')
+                ->orderBy('id', 'desc')
+                ->limit(50)
+                ->get();
+
+            $newData = [];
+            foreach ($results as $data) {
+                $newData = array_merge($newData, [[
+                    'date'      => $data->date,
+                    'nominal'   => $data->nominal,
+                    'deskripsi' => $data->deskripsi,
+                ]]);
+            }
+
+            return response()->json(['data' => $newData], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['data' => []], 500);
         }
     }
 }
