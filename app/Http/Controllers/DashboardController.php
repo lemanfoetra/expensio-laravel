@@ -92,7 +92,7 @@ class DashboardController extends Controller
                 ])
                 ->where('id_users', Auth::id())
                 ->whereRaw(DB::raw("DATE_FORMAT(date, '%Y-%m') = '" . date('Y-m') . "' "))
-                ->orderBy('date', 'asc')
+                ->orderBy('date', 'desc')
                 ->groupBy('date')
                 ->limit(31)
                 ->get();
