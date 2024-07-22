@@ -80,4 +80,34 @@ class DashboardController extends Controller
             ], 500);
         }
     }
+
+
+    public function detailPengeluaranBulanIni()
+    {
+        try {
+            $results = DB::table('expenses')
+                ->select([
+                    "expenses.date",
+                    DB::raw("(SELECT SUM(B.nominal) FROM expenses B where B.id_users = expenses.id_users AND B.date = expenses.date ) AS jumlah_nominal")
+                ])
+                ->where('id_users', Auth::id())
+                ->whereRaw(DB::raw("DATE_FORMAT(date, '%Y-%m') = '" . date('Y-m') . "' "))
+                ->orderBy('date', 'desc')
+                ->groupBy('date')
+                ->limit(31)
+                ->get();
+
+            return response()->json([
+                'success'   => true,
+                'message'   => '',
+                'data'      => $results,
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success'   => false,
+                'message'   => $th->getMessage(),
+                'data'      => [],
+            ], 500);
+        }
+    }
 }
