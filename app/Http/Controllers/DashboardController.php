@@ -67,18 +67,17 @@ class DashboardController extends Controller
                 ->limit(50)
                 ->get();
 
-            $newData = [];
-            foreach ($results as $data) {
-                $newData = array_merge($newData, [[
-                    'date'      => $data->date,
-                    'nominal'   => $data->nominal,
-                    'deskripsi' => $data->deskripsi,
-                ]]);
-            }
-
-            return response()->json(['data' => $newData], 200);
+            return response()->json([
+                'success'   => true,
+                'message'   => '',
+                'data'      => $results,
+            ], 200);
         } catch (\Throwable $th) {
-            return response()->json(['data' => []], 500);
+            return response()->json([
+                'success'   => false,
+                'message'   => $th->getMessage(),
+                'data'      => [],
+            ], 500);
         }
     }
 }
