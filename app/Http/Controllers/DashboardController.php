@@ -109,7 +109,6 @@ class DashboardController extends Controller
 
     public function detailPengeluaranBulanIni()
     {
-        return $this->rangeWeek(date('Y-m-d'));
         try {
             $results = DB::table('expenses')
                 ->select([
