@@ -32,6 +32,31 @@ class DashboardController extends Controller
     }
 
 
+    public function pengeluaranMingguIni()
+    {
+        try {
+            $weeks = $this->rangeWeek(date('Y-m-d'));
+            $result = DB::table('expenses')
+                ->selectRaw(DB::raw("sum(nominal) as jumlah"))
+                ->where('id_users', auth()->id())
+                ->whereBetween('date', [$weeks[0], $weeks[1]])
+                ->first();
+
+            return response()->json([
+                'success'   => true,
+                'message'   => 'success',
+                'data'      => $result->jumlah ?? 0,
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success'   => false,
+                'message'   => $th->getMessage(),
+                'data'      => [],
+            ], 500);
+        }
+    }
+
+
     public function pengeluaranBulanIni()
     {
         try {
@@ -84,6 +109,7 @@ class DashboardController extends Controller
 
     public function detailPengeluaranBulanIni()
     {
+        return $this->rangeWeek(date('Y-m-d'));
         try {
             $results = DB::table('expenses')
                 ->select([
@@ -109,5 +135,16 @@ class DashboardController extends Controller
                 'data'      => [],
             ], 500);
         }
+    }
+
+
+    private function rangeWeek($datestr)
+    {
+        date_default_timezone_set(date_default_timezone_get());
+        $dt = strtotime($datestr);
+        return [
+            date('N', $dt) == 1 ? date('Y-m-d', $dt) : date('Y-m-d', strtotime('last monday', $dt)),
+            date('N', $dt) == 7 ? date('Y-m-d', $dt) : date('Y-m-d', strtotime('next sunday', $dt))
+        ];
     }
 }
