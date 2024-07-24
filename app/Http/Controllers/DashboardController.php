@@ -113,16 +113,17 @@ class DashboardController extends Controller
     public function detailPengeluaranMingguIni()
     {
         try {
+            $weeks = $this->rangeWeek(date('Y-m-d'));
             $results = DB::table('expenses')
                 ->select([
                     "expenses.date",
                     DB::raw("(SELECT SUM(B.nominal) FROM expenses B where B.id_users = expenses.id_users AND B.date = expenses.date ) AS jumlah_nominal")
                 ])
                 ->where('id_users', Auth::id())
-                ->whereRaw(DB::raw("DATE_FORMAT(date, '%Y-%m') = '" . date('Y-m') . "' "))
+                ->whereBetween('date', [$weeks[0], $weeks[1]])
                 ->orderBy('date', 'desc')
                 ->groupBy('date')
-                ->limit(31)
+                ->limit(30)
                 ->get();
 
             return response()->json([
