@@ -28,6 +28,10 @@ class ExpenseController extends Controller
                 $uqery->offset($request->offset);
             }
 
+            if ($request->firstday != '' &&  $request->lastday != '') {
+                $uqery->whereBetween('date', [$request->firstday, $request->lastday]);
+            }
+
             $espenses = $uqery->orderBy('date', 'desc')
                 ->orderBy('id', 'DESC')
                 ->get();
