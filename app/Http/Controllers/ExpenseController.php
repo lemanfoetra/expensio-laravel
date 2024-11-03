@@ -36,6 +36,14 @@ class ExpenseController extends Controller
                 ->orderBy('id', 'DESC')
                 ->get();
 
+            foreach ($espenses as $key => $value) {
+                $tipe = DB::table('tipe_expenses')
+                    ->select(['tipe'])
+                    ->where('id', $value->id_tipe_expense)
+                    ->first();
+                $espenses[$key]->tipe_expense = $tipe->tipe;
+            }
+
             return response()->json([
                 'success'   => true,
                 'message'   => '',
@@ -58,8 +66,16 @@ class ExpenseController extends Controller
                 'date'          => $request->date,
                 'nominal'       => $request->nominal,
                 'deskripsi'     => $request->deskripsi,
+                'id_tipe_expense'   => $request->id_tipe_expense,
                 'id_users'      => Auth::id(),
             ]);
+
+            $tipe = DB::table('tipe_expenses')
+                ->select(['tipe'])
+                ->where('id', $request->id_tipe_expense)
+                ->first();
+            $expense->tipe_expense = $tipe->tipe;
+
             return response()->json([
                 'success'   => true,
                 'message'   => 'success',
@@ -82,6 +98,17 @@ class ExpenseController extends Controller
                 ->where('id', $id)
                 ->where('id_users', Auth::id())
                 ->first();
+
+            if (empty($expense)) {
+                throw new Exception("Expense empty");
+            }
+
+            $tipe = DB::table('tipe_expenses')
+                ->select(['tipe'])
+                ->where('id', $expense->id_tipe_expense)
+                ->first();
+            $expense->tipe_expense = $tipe->tipe;
+
             if ($expense == null) {
                 throw new Exception('Data not found.');
             }
@@ -115,11 +142,18 @@ class ExpenseController extends Controller
                 'date'          => $request->date,
                 'nominal'       => $request->nominal,
                 'deskripsi'     => $request->deskripsi,
+                'id_tipe_expense'     => $request->id_tipe_expense,
             ];
             DB::table('expenses')
                 ->where('id', $id)
                 ->where('id_users', Auth::id())
                 ->update($expense);
+
+            $tipe = DB::table('tipe_expenses')
+                ->select(['tipe'])
+                ->where('id', $request->id_tipe_expense)
+                ->first();
+            $expense['tipe_expense'] = $tipe->tipe;
 
             return response()->json([
                 'success'   => true,

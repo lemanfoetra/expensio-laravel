@@ -27,6 +27,7 @@ class ExpenseCreateRequest extends FormRequest
             'date'      => 'required',
             'nominal'   => 'required',
             'deskripsi' => 'required',
+            'id_tipe_expense'   => 'required|numeric',
         ];
     }
 }
