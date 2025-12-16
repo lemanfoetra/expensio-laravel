@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\IncomesController;
 use App\Http\Controllers\Login;
 use App\Http\Controllers\TipeExpenseController;
 use Illuminate\Http\Request;
@@ -44,5 +45,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('tipe_expense')->group(function () {
         Route::get('/', [TipeExpenseController::class, 'index']);
+    });
+
+    Route::prefix('income')->group(function () {
+        Route::get('/', [IncomesController::class, 'index']);
+        Route::post('/', [IncomesController::class, 'store']);
+        Route::get('/{id}', [IncomesController::class, 'show']);
+        Route::put('/{id}', [IncomesController::class, 'update']);
+        Route::delete('/{id}', [IncomesController::class, 'destroy']);
     });
 });
