@@ -29,7 +29,7 @@ class IncomesController extends Controller
                 $uqery->offset($request->offset);
             }
 
-            $espenses = $uqery->orderBy('date', 'desc')
+            $espenses = $uqery->orderBy('income_date', 'desc')
                 ->orderBy('id', 'DESC')
                 ->get();
 
@@ -82,7 +82,7 @@ class IncomesController extends Controller
                 ->first();
 
             if (empty($income)) {
-                throw new Exception("Expense empty");
+                throw new Exception("Income empty");
             }
 
             if ($income == null) {
@@ -103,7 +103,7 @@ class IncomesController extends Controller
     }
 
 
-    public function update(ExpenseCreateRequest $request, $id)
+    public function update(IncomesCreateRequest $request, $id)
     {
         try {
             $old = DB::table('incomes')
@@ -115,21 +115,14 @@ class IncomesController extends Controller
             }
 
             $income = [
-                'date'          => $request->date,
-                'nominal'       => $request->nominal,
-                'deskripsi'     => $request->deskripsi,
-                'id_tipe_expense'     => $request->id_tipe_expense,
+                'income_date'  => $request->income_date,
+                'source'       => $request->source,
+                'amount'       => $request->amount,
             ];
             DB::table('incomes')
                 ->where('id', $id)
                 ->where('id_users', Auth::id())
                 ->update($income);
-
-            $tipe = DB::table('tipe_expenses')
-                ->select(['tipe'])
-                ->where('id', $request->id_tipe_expense)
-                ->first();
-            $income['tipe_expense'] = $tipe->tipe;
 
             return response()->json([
                 'success'   => true,
@@ -149,7 +142,7 @@ class IncomesController extends Controller
     public function destroy($id)
     {
         try {
-            $old = DB::table('expenses')
+            $old = DB::table('incomes')
                 ->where('id', $id)
                 ->where('id_users', Auth::id())
                 ->first(['id']);
@@ -157,7 +150,7 @@ class IncomesController extends Controller
                 throw new Exception("Data not found.");
             }
 
-            DB::table('expenses')
+            DB::table('incomes')
                 ->where('id', $id)
                 ->where('id_users', Auth::id())
                 ->delete();
