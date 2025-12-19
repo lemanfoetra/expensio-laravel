@@ -25,6 +25,10 @@ class IncomesController extends Controller
                 $uqery->limit(100);
             }
 
+            if ($request->firstday != '' &&  $request->lastday != '') {
+                $uqery->whereBetween('income_date', [$request->firstday, $request->lastday]);
+            }
+
             if ($request->offset != null) {
                 $uqery->offset($request->offset);
             }
