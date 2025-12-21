@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\IncomesController;
@@ -53,5 +54,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [IncomesController::class, 'show']);
         Route::put('/{id}', [IncomesController::class, 'update']);
         Route::delete('/{id}', [IncomesController::class, 'destroy']);
+    });
+
+    Route::prefix('budget')->group(function () {
+        Route::get('/', [BudgetController::class, 'index']);
+        Route::post('/', [BudgetController::class, 'store']);
+        Route::get('/{id}', [BudgetController::class, 'show']);
+        Route::put('/{id}', [BudgetController::class, 'update']);
+        Route::delete('/{id}', [BudgetController::class, 'destroy']);
     });
 });

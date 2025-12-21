@@ -12,11 +12,12 @@ class TipeExpenseController extends Controller
         try {
             $tipeExpenses = DB::table('tipe_expenses')
                 ->select(['id', 'tipe'])
+                ->where('id_users', auth()->user()->id)
                 ->get();
 
             return response()->json([
                 'success'   => true,
-                'message'   => '',
+                'message'   => 'success',
                 'data'      => $tipeExpenses,
             ], 200);
         } catch (\Throwable $th) {
