@@ -178,7 +178,7 @@ class DashboardController extends Controller
 
             $pemasukan = DB::table('incomes')
                 ->where('id_users', $id_user)
-                ->whereBetween('date', [$awalAkhir['awal'], $awalAkhir['akhir']])
+                ->whereBetween('income_date', [$awalAkhir['awal'], $awalAkhir['akhir']])
                 ->sum('amount');
             $pengeluaran = DB::table('expenses')
                 ->where('id_users', $id_user)
