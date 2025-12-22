@@ -188,16 +188,23 @@ class DashboardController extends Controller
                 ->where('id_users', $id_user)
                 ->sum('budget');
 
+            $total_saving = 0;
+            if ($pengeluaran > $budget) {
+                $total_saving =  $pemasukan - $pengeluaran;
+            } else {
+                $total_saving = $pemasukan - $budget;
+            }
+
             return response()->json([
                 'success'   => true,
                 'message'   => 'success',
                 'data'      => [
                     'total_pemasukan'   => $pemasukan,
                     'total_pengeluaran' => $pengeluaran,
-                    'todal_budget'      => $budget,
+                    'total_budget'      => $budget,
+                    'total_saving'      => $total_saving,
                 ],
             ], 200);
-
         } catch (\Throwable $th) {
             return response()->json([
                 'success'   => false,
