@@ -170,6 +170,44 @@ class DashboardController extends Controller
     }
 
 
+    public function overview()
+    {
+        try {
+            $id_user = auth()->user()->id;
+            $awalAkhir = $this->getAwalAkhirBulanIni();
+
+            $pemasukan = DB::table('incomes')
+                ->where('id_users', $id_user)
+                ->whereBetween('date', [$awalAkhir['awal'], $awalAkhir['akhir']])
+                ->sum('amount');
+            $pengeluaran = DB::table('expenses')
+                ->where('id_users', $id_user)
+                ->whereBetween('date', [$awalAkhir['awal'], $awalAkhir['akhir']])
+                ->sum('nominal');
+            $budget = DB::table('budgets')
+                ->where('id_users', $id_user)
+                ->sum('budget');
+
+            return response()->json([
+                'success'   => true,
+                'message'   => 'success',
+                'data'      => [
+                    'total_pemasukan'   => $pemasukan,
+                    'total_pengeluaran' => $pengeluaran,
+                    'todal_budget'      => $budget,
+                ],
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success'   => false,
+                'message'   => $th->getMessage(),
+                'data'      => [],
+            ], 500);
+        }
+    }
+
+
     private function rangeWeek($datestr)
     {
         date_default_timezone_set(date_default_timezone_get());
@@ -219,5 +257,17 @@ class DashboardController extends Controller
             ];
         }
         return $weeks;
+    }
+
+
+    private function getAwalAkhirBulanIni(): array
+    {
+        $awal  = date('Y-m-01');
+        $akhir = date('Y-m-t');
+
+        return [
+            'awal'  => $awal,
+            'akhir' => $akhir,
+        ];
     }
 }
